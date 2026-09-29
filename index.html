@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A playable Morse code trainer card: straight key with sidetone, live-lit decode chart, record and playback, text sending, and a Koch-order drill.">
+<meta name="theme-color" content="#142124">
+<title>Dit Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="css/dit-deck.css">
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<main class="wrap">
+  <header class="head">
+    <h1>Dit Deck</h1>
+    <p>A pocket CW trainer card. Hold the key (or <kbd>Space</kbd>) and watch your path light up the chart. Switch between the pathway card layout and the binary tree with JP1. Letters print on the tape when you pause.</p>
+  </header>
+
+  <section class="board" aria-label="Trainer card">
+    <span class="hole tl"></span><span class="hole tr"></span><span class="hole bl"></span><span class="hole br"></span>
+    <div class="silk-row"><span class="brand">DIT·DECK</span><span>CW trainer</span><span>Rev B · 2026</span></div>
+
+    <div class="board-body">
+      <div class="tree"><svg id="tree" viewBox="0 0 540 340" role="img" aria-label="Morse code tree. Dit branches up, dah branches down."></svg></div>
+
+      <div class="panel">
+        <div class="readout" aria-live="polite">
+          <div class="ro-code idle" id="roCode">—</div>
+          <div class="ro-char idle" id="roChar">·</div>
+          <div class="ro-label">U2 · decode</div>
+        </div>
+
+        <div class="keyzone">
+          <div class="lamps">
+            <div class="lamp"><span class="led5" id="sigLed"></span><span class="silk">LED1 sig</span></div>
+            <div class="lamp"><span class="led5 red" id="errLed"></span><span class="silk">LED2 err</span></div>
+          </div>
+          <button class="key" id="key" type="button" aria-label="Morse key. Press and hold."></button>
+          <span class="silk">SW1 key · hold space</span>
+        </div>
+
+        <div class="switches">
+          <button class="sw" id="swSnd" type="button" data-c="ok" aria-pressed="true"><span class="ind"></span><span class="cap"></span>Snd</button>
+          <button class="sw" id="swRec" type="button" data-c="rec" aria-pressed="false"><span class="ind"></span><span class="cap"></span>Rec</button>
+          <button class="sw" id="swPlay" type="button" data-c="amb" aria-pressed="false"><span class="ind"></span><span class="cap"></span>Play</button>
+          <button class="sw" id="swClr" type="button"><span class="ind"></span><span class="cap"></span>Clr</button>
+        </div>
+        <div class="recinfo" id="recInfo"></div>
+
+        <div class="pots">
+          <label class="pot" for="wpm"><span>VR1 speed <output id="wpmOut">12 wpm</output></span><input id="wpm" type="range" min="5" max="30" step="1" value="12"></label>
+          <label class="pot" for="hz"><span>VR2 tone <output id="hzOut">620 Hz</output></span><input id="hz" type="range" min="400" max="900" step="10" value="620"></label>
+        </div>
+        <div class="jp">
+          <span class="silk">JP1 chart</span>
+          <div class="slide" role="group" aria-label="Chart layout">
+            <button type="button" data-chart="pathway" aria-pressed="true">Pathway</button>
+            <button type="button" data-chart="tree" aria-pressed="false">Tree</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip" id="strip" aria-label="Numbers and punctuation"></div>
+    <div class="silk-row"><span>BT1 CR2032</span><span id="timing">1 unit = 100 ms</span><span>BZ1 · Q1 · R1 1k</span></div>
+  </section>
+
+  <section class="tape" aria-label="Decoded copy">
+    <div class="bar">
+      <h2>Copy<span class="tag" id="sampleTag">sample</span></h2>
+      <div class="actions">
+        <button class="btn ghost" id="blindBtn" type="button" aria-pressed="false">Blind copy</button>
+        <button class="btn ghost" id="copyBtn" type="button">Copy text</button>
+        <button class="btn ghost" id="clearBtn" type="button">Clear</button>
+      </div>
+    </div>
+    <div class="paper" id="paper"><span id="tapeText"></span></div>
+  </section>
+
+  <section class="bench">
+    <div class="bench-card">
+      <h2>Send text</h2>
+      <p class="note">The card keys your text at the set speed, sounds it, and decodes it onto the tape. Turn on Blind copy and write down what you hear.</p>
+      <input type="text" id="sendText" value="CQ CQ DE DIT DECK K" autocomplete="off" spellcheck="false" aria-label="Text to send">
+      <div class="row">
+        <button class="btn" id="sendBtn" type="button">Send</button>
+        <button class="btn ghost" id="stopBtn" type="button">Stop</button>
+      </div>
+    </div>
+
+    <div class="bench-card">
+      <h2>Drill</h2>
+      <p class="note">Koch order, a few characters at a time. Add one more once you're holding 90%.</p>
+      <div class="row">
+        <div class="seg" role="group" aria-label="Drill mode">
+          <button type="button" data-mode="see" aria-pressed="true">See it</button>
+          <button type="button" data-mode="hear" aria-pressed="false">Hear it</button>
+        </div>
+      </div>
+      <label class="lvl" for="level"><span>Characters in play <b id="levelN">6</b></span>
+        <input id="level" type="range" min="2" max="41" value="6"><output id="levelOut"></output></label>
+      <div class="target" aria-live="polite"><div class="ch" id="tgtCh">K</div><div class="cd" id="tgtCd"></div></div>
+      <p class="dres" id="dres">Press Start, then key the character shown.</p>
+      <div class="row">
+        <button class="btn" id="drillBtn" type="button">Start</button>
+        <button class="btn ghost" id="replayBtn" type="button" hidden>Replay</button>
+      </div>
+      <dl class="stats">
+        <div><dt>Streak</dt><dd id="stStreak">0</dd></div>
+        <div><dt>Accuracy</dt><dd id="stAcc">—</dd></div>
+        <div><dt>Tries</dt><dd id="stTries">0</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+</body>
+</html>
