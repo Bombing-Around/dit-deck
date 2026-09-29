@@ -45,3 +45,7 @@ On iOS the first tap unlocks audio. The page requests a playback audio session s
 | `js/audio.js` | Web Audio sidetone and the iOS audio unlock |
 | `js/chart.js` | Pathway and tree chart drawing, plus path lighting |
 | `js/main.js` | Decoder, tape, player, recorder, drill, and UI wiring |
+
+## License
+
+[MIT](LICENSE)
