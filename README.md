@@ -13,6 +13,7 @@ A playable Morse code trainer card. Plain HTML, CSS, and ES modules: no build st
 - **Send text**: the card keys your text at the set speed. Blind-copy mode hides the tape for ear training.
 - **Drill**: Koch-order practice in "see it" or "hear it" mode, with streak and accuracy.
 - **Speed run**: copy by ear and type what you hear (letters, 5-character groups, words, or callsigns). Speed ramps up 1 wpm every 3 in a row and drops 1 on a miss; slower speeds use Farnsworth spacing so characters stay at least at the set character speed. Letters mode adds an answer clock. Speed and best are saved in the browser.
+- **Fist meter**: the card's bottom edge shows how fast you're actually keying.
 - **Glossary**: on-air shorthand (CQ, DE, K, 73, prosigns, Q codes), Morse basics, and the card's labels, each playable. Chips under the tape explain any shorthand in your copy.
 
 ## Timing

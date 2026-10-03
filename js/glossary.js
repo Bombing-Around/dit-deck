@@ -38,6 +38,7 @@ export const GLOSSARY = [
     { t: 'Unit', d: 'The basic beat. A dit is 1 unit and a dah is 3. Gaps are 1 unit inside a letter, 3 between letters, and 7 between words. The card shows the current unit length along its bottom edge.' },
     { t: 'WPM', send: 'PARIS', d: 'Words per minute, using PARIS (exactly 50 units) as the standard word. One unit in ms = 1200 ÷ WPM, so at 12 wpm a unit is 100 ms. Press ▶ to hear PARIS.' },
     { t: 'Farnsworth', send: 'FB', d: 'Send each character at full speed, but stretch the gaps between them. You learn the rhythm of the letter, and the extra space gives you time to think. Speed run uses it: the big number is your overall speed, and characters never go slower than the character-speed slider.' },
+    { t: 'Fist', d: 'An operator\'s sending style, as recognizable as handwriting. The card estimates your keying speed from how long you hold dits and dahs and shows it along its bottom edge. If decoding keeps going wrong, compare it with VR1.' },
     { t: 'CW', send: 'CW', d: 'Continuous wave: what hams call Morse sent over the radio. "Working CW" = talking in Morse.' },
     { t: 'Prosign', code: '.-.-.', d: 'Two letters keyed together with no letter gap, so they act as a single symbol. Written with a bar over them, like AR, SK, KN and BT. ▶ plays AR.' },
     { id: 'koch', t: 'Koch method', d: 'Learn at full speed from the start. Begin with two characters and add one each time you copy 90% correctly. The Drill uses Koch order, which is why it starts on K and M.' },

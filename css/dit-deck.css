@@ -232,4 +232,6 @@ a{color:var(--gold-hi);text-underline-offset:2px}
 .timer span{display:block;height:100%;background:var(--led);transform-origin:left}
 #spIn{font-size:22px;letter-spacing:.14em;text-transform:uppercase}
 #spIn:disabled{opacity:.5}
+.silk-row a{color:inherit;text-decoration:none}
+.silk-row a:hover{color:var(--silk)}
 @media (max-width:780px){ .speed-body{grid-template-columns:1fr} }

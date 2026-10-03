@@ -57,6 +57,7 @@ function release(src) {
   if (rec.on && src === 'user') recPush(0);
   if (!pressDecode) return;
   const dur = performance.now() - downAt;
+  if (src === 'user') fistPush(dur);
   buf += dur < 2 * U() ? '.' : '-';
   board.lightPath(buf);
   renderRO(buf, REV[buf]);
@@ -87,6 +88,17 @@ function commit() {
 function hardReset() {
   clearTimeout(gapT); clearTimeout(wordT);
   buf = ''; board.clear(); renderRO('', '');
+}
+
+/* ---------- fist meter: how fast you're actually keying ---------- */
+const fist = [];
+function fistPush(dur) {
+  if (dur > 8 * U()) return;
+  fist.push(dur); if (fist.length > 20) fist.shift();
+  if (fist.length < 4) return;
+  // Same dit/dah split as the decoder; a dah counts as 3 units.
+  const units = fist.map(d => d < 2 * U() ? d : d / 3);
+  $('#fist').textContent = `your fist ${Math.round(1200 * units.length / units.reduce((a, b) => a + b))} wpm`;
 }
 
 /* ---------- tape ---------- */
