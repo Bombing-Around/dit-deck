@@ -1,4 +1,4 @@
-import { MORSE, REV, KOCH, glyphs, textToEvents, codeToEvents } from './morse.js';
+import { MORSE, REV, KOCH, WORDS, glyphs, textToEvents, codeToEvents, farnsworthGap } from './morse.js';
 import { renderGlossary, glossWords } from './glossary.js';
 import { CHARTS, createBoard } from './chart.js';
 import { installAudio, ensureAudio, audioBlocked, tone, setPitch, soundOn, setSound } from './audio.js';
@@ -232,8 +232,88 @@ function setDrill(on) {
   D.on = on;
   $('#drillBtn').textContent = on ? 'Stop' : 'Start';
   $('#replayBtn').hidden = !(on && D.mode === 'hear');
-  if (on) { D.streak = D.right = D.tries = 0; renderStats(); ensureAudio(); dismissSample(); dNext(); }
+  if (on) { if (SP.on) setSpeed(false); D.streak = D.right = D.tries = 0; renderStats(); ensureAudio(); dismissSample(); dNext(); }
   else { D.lock = false; stopPlay(); say('Stopped. Press Start to go again.'); renderTarget(true); }
+}
+
+/* ---------- speed run ---------- */
+const SP = { on: false, kind: 'letters', char: 18, wpm: 10, best: 0, ans: '', prev: null, run: 0, right: 0, tries: 0, lock: true, t: 0 };
+try { Object.assign(SP, JSON.parse(localStorage.getItem('ditdeck.speed')) || {}); } catch {}
+const spSave = () => { try { localStorage.setItem('ditdeck.speed', JSON.stringify({ char: SP.char, wpm: SP.wpm, best: SP.best })); } catch {} };
+const spIn = $('#spIn'), spRes = $('#spRes'), spTimer = $('#spTimer');
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const PFX = ['K', 'W', 'N', 'AA', 'KD', 'KJ', 'WB', 'VE', 'G', 'M', 'DL', 'F', 'JA', 'VK', 'EA', 'ON', 'PA', 'OH', 'SM', 'I'];
+const callsign = () => pick(PFX) + Math.floor(Math.random() * 10) + Array.from({ length: 1 + Math.floor(Math.random() * 3) }, () => pick(ABC)).join('');
+function spItem() {
+  const pool = KOCH.slice(0, D.level);
+  if (SP.kind === 'groups') return Array.from({ length: 5 }, () => pick(pool)).join('');
+  if (SP.kind === 'words') return pick(WORDS);
+  if (SP.kind === 'calls') return callsign();
+  let t;
+  do t = pick(pool); while (pool.length > 1 && t === SP.prev);
+  return t;
+}
+const spChar = () => Math.max(SP.char, SP.wpm);
+// A lone letter has no gaps to stretch, so a clock sets the pace: one character's share of a minute at this speed.
+const spWindow = () => 60000 / (5 * SP.wpm);
+const spEvents = () => { const c = spChar(); return textToEvents(SP.ans, 1200 / c, farnsworthGap(c, SP.wpm)); };
+function renderSpeed() {
+  $('#spWpm').textContent = SP.wpm;
+  $('#spMx').textContent = SP.kind === 'letters'
+    ? `characters at ${spChar()} wpm · ${(spWindow() / 1000).toFixed(1)} s to answer`
+    : spChar() > SP.wpm ? `characters at ${spChar()} wpm, gaps stretched to ${SP.wpm}` : `characters and gaps at ${SP.wpm} wpm`;
+  $('#spStreak').textContent = SP.run;
+  $('#spAcc').textContent = SP.tries ? Math.round(100 * SP.right / SP.tries) + '%' : '—';
+  $('#spBest').textContent = SP.best ? SP.best + ' wpm' : '—';
+}
+function spSay(msg, cls = '') { spRes.textContent = msg; spRes.className = 'dres ' + cls; }
+function spTimerStart() {
+  const bar = spTimer.firstElementChild, ms = spWindow();
+  bar.style.transition = 'none'; bar.style.transform = 'scaleX(1)';
+  void bar.offsetWidth; // restart the transition
+  bar.style.transition = `transform ${ms}ms linear`; bar.style.transform = 'scaleX(0)';
+  spTimer.classList.add('run');
+  SP.t = setTimeout(() => spCheck(''), ms);
+}
+function spListen() {
+  clearTimeout(SP.t); spTimer.classList.remove('run');
+  play(spEvents(), { decode: false, onDone: () => { if (SP.on && !SP.lock && SP.kind === 'letters') spTimerStart(); } });
+}
+function spNext() {
+  if (!SP.on) return;
+  SP.ans = SP.prev = spItem(); SP.lock = false;
+  spIn.value = ''; spIn.focus();
+  spSay('Listen…');
+  spListen();
+}
+function spCheck(typed) {
+  if (!SP.on || SP.lock) return;
+  SP.lock = true; clearTimeout(SP.t); spTimer.classList.remove('run');
+  const got = typed.toUpperCase().replace(/\s+/g, ''), was = SP.wpm;
+  SP.tries++;
+  if (got === SP.ans) {
+    SP.right++; SP.best = Math.max(SP.best, was);
+    if (++SP.run % 3 === 0 && SP.wpm < 40) SP.wpm++;
+    spSay(`${SP.ans} · correct${SP.wpm > was ? ` · up to ${SP.wpm} wpm` : ''}`, 'ok');
+    SP.t = setTimeout(spNext, 450);
+  } else {
+    SP.run = 0; SP.wpm = Math.max(5, SP.wpm - 1);
+    const it = SP.ans.length === 1 ? `${SP.ans} ${glyphs(MORSE[SP.ans])}` : SP.ans;
+    spSay(`${got ? `You copied ${got}.` : 'Too slow.'} It was ${it}${SP.wpm < was ? ` · down to ${SP.wpm} wpm` : ''}`, 'bad');
+    // Hear it again now that you know what it was, then move on.
+    SP.t = setTimeout(() => play(spEvents(), { decode: false, onDone: () => { SP.t = setTimeout(spNext, 700); } }), 400);
+  }
+  spSave(); renderSpeed();
+}
+function setSpeed(on) {
+  SP.on = on; SP.lock = true;
+  clearTimeout(SP.t); spTimer.classList.remove('run'); stopPlay();
+  $('#spBtn').textContent = on ? 'Stop' : 'Start';
+  $('#spReplay').hidden = !on;
+  spIn.disabled = !on;
+  if (on) { if (D.on) setDrill(false); SP.run = SP.right = SP.tries = 0; ensureAudio(); renderSpeed(); spNext(); }
+  else spSay('Stopped. Press Start to go again.');
 }
 
 /* ---------- wiring ---------- */
@@ -316,9 +396,9 @@ $('#copyBtn').addEventListener('click', e => {
   } catch { fallback(); }
 });
 
-document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
   D.mode = b.dataset.mode;
-  document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
   $('#replayBtn').hidden = !(D.on && D.mode === 'hear');
   if (D.on) { stopPlay(); dNext(); } else renderTarget(true);
 }));
@@ -326,6 +406,21 @@ $('#level').max = KOCH.length;
 $('#level').addEventListener('input', e => { D.level = +e.target.value; renderLevel(); if (D.on) { stopPlay(); dNext(); } });
 $('#drillBtn').addEventListener('click', () => setDrill(!D.on));
 $('#replayBtn').addEventListener('click', () => { if (D.on) sound(D.target); });
+
+document.querySelectorAll('[data-sp]').forEach(b => b.addEventListener('click', () => {
+  SP.kind = b.dataset.sp;
+  document.querySelectorAll('[data-sp]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  renderSpeed();
+  if (SP.on) { SP.lock = true; SP.run = 0; spNext(); }
+}));
+const spCharIn = $('#spChar');
+const renderSpChar = () => { $('#spCharOut').textContent = SP.char + ' wpm'; renderSpeed(); };
+spCharIn.value = SP.char;
+spCharIn.addEventListener('input', () => { SP.char = +spCharIn.value; spSave(); renderSpChar(); });
+spIn.addEventListener('input', () => { if (SP.kind === 'letters' && spIn.value.trim()) spCheck(spIn.value); });
+spIn.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); spCheck(spIn.value); } });
+$('#spBtn').addEventListener('click', () => setSpeed(!SP.on));
+$('#spReplay').addEventListener('click', () => { if (SP.on && !SP.lock) { spIn.focus(); spListen(); } });
 
 document.querySelectorAll('[data-chart]').forEach(b => b.addEventListener('click', () => {
   if (b.dataset.chart === chart) return;
@@ -341,5 +436,5 @@ for (const c of 'CQ DE DIT DECK K') tape.push({ c });
 renderTape();
 board.lightPath('-.-', 'hold');
 renderRO('-.-', 'K');
-renderTiming(); renderLevel(); renderTarget(true); recLabel();
+renderTiming(); renderLevel(); renderTarget(true); recLabel(); renderSpChar();
 renderGlossary($('#glossList'), e => play(e.code ? codeToEvents(e.code, U()) : textToEvents(e.send, U()), { decode: false }));

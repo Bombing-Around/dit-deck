@@ -116,6 +116,43 @@
         <div><dt>Tries</dt><dd id="stTries">0</dd></div>
       </dl>
     </div>
+
+    <div class="bench-card speed">
+      <div class="speed-head">
+        <h2>Speed run</h2>
+        <p class="note">Copy by ear and type what you hear. Three right in a row and your speed goes up 1 wpm; a miss drops it 1. Characters always go out at least as fast as the character-speed slider, and slower speeds just stretch the gaps (<a href="#g-farnsworth">Farnsworth</a>), so you learn each letter's sound instead of counting dots. Letters and groups use the Drill's characters in play.</p>
+      </div>
+      <div class="speed-body">
+        <div class="speed-col">
+          <div class="seg" role="group" aria-label="Speed run material">
+            <button type="button" data-sp="letters" aria-pressed="true">Letters</button>
+            <button type="button" data-sp="groups" aria-pressed="false">Groups</button>
+            <button type="button" data-sp="words" aria-pressed="false">Words</button>
+            <button type="button" data-sp="calls" aria-pressed="false">Calls</button>
+          </div>
+          <label class="lvl" for="spChar"><span>Character speed <b id="spCharOut">18 wpm</b></span>
+            <input id="spChar" type="range" min="10" max="35" value="18"></label>
+          <div class="meter" aria-live="polite">
+            <div class="wpm"><b id="spWpm">10</b> wpm</div>
+            <div class="mx" id="spMx"></div>
+            <div class="timer" id="spTimer"><span></span></div>
+          </div>
+        </div>
+        <div class="speed-col">
+          <input type="text" id="spIn" placeholder="Type what you hear" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Your copy" disabled>
+          <p class="dres" id="spRes">Press Start and listen.</p>
+          <div class="row">
+            <button class="btn" id="spBtn" type="button">Start</button>
+            <button class="btn ghost" id="spReplay" type="button" hidden>Replay</button>
+          </div>
+          <dl class="stats">
+            <div><dt>Streak</dt><dd id="spStreak">0</dd></div>
+            <div><dt>Accuracy</dt><dd id="spAcc">—</dd></div>
+            <div><dt>Best</dt><dd id="spBest">—</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="glossary" id="glossary" aria-labelledby="glossaryH">

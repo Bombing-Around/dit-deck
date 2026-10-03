@@ -215,3 +215,21 @@ a{color:var(--gold-hi);text-underline-offset:2px}
 .g-play:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
 .g-item dd{margin:0;font-size:14px;color:var(--muted)}
 .g-item .g-code{font:15px var(--f-silk);letter-spacing:.18em;color:var(--led)}
+
+/* ---------- speed run ---------- */
+.bench-card.speed{grid-column:1/-1}
+.speed-head{display:grid;gap:6px}
+.speed-head .note{max-width:90ch}
+.speed-body{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.speed-col{display:grid;gap:12px}
+.speed .seg{justify-self:start}
+.meter{display:grid;justify-items:center;gap:4px;background:var(--well);border-radius:10px;padding:14px 10px 12px}
+.meter .wpm{font:600 15px var(--f-disp);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.meter .wpm b{font:700 56px/1 var(--f-disp);color:var(--led);text-shadow:0 0 12px rgba(255,174,42,.35);margin-right:4px;font-variant-numeric:tabular-nums}
+.meter .mx{font:12px var(--f-silk);letter-spacing:.08em;color:var(--silk-dim);text-align:center}
+.timer{width:100%;height:4px;border-radius:2px;background:var(--panel-edge);overflow:hidden;visibility:hidden}
+.timer.run{visibility:visible}
+.timer span{display:block;height:100%;background:var(--led);transform-origin:left}
+#spIn{font-size:22px;letter-spacing:.14em;text-transform:uppercase}
+#spIn:disabled{opacity:.5}
+@media (max-width:780px){ .speed-body{grid-template-columns:1fr} }
