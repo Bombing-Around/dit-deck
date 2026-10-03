@@ -1,4 +1,5 @@
-import { MORSE, REV, KOCH, glyphs, textToEvents } from './morse.js';
+import { MORSE, REV, KOCH, glyphs, textToEvents, codeToEvents } from './morse.js';
+import { renderGlossary, glossWords } from './glossary.js';
 import { CHARTS, createBoard } from './chart.js';
 import { installAudio, ensureAudio, audioBlocked, tone, setPitch, soundOn, setSound } from './audio.js';
 
@@ -103,12 +104,27 @@ function renderTape() {
   if (buf) { const s = document.createElement('span'); s.className = 'pend'; s.textContent = glyphs(buf); frag.append(s); }
   const caret = document.createElement('span'); caret.className = 'caret'; frag.append(caret);
   tapeEl.replaceChildren(frag);
+  renderGloss();
+}
+// Chips explaining any on-air shorthand in the copy. Hidden in blind copy so it can't give the game away.
+const glossEl = $('#gloss');
+function renderGloss() {
+  const words = tape.filter(t => !t.err).map(t => t.c).join('').split(/\s+/).filter(Boolean).slice(-40);
+  const found = $('#paper').classList.contains('blind') ? [] : glossWords(words);
+  glossEl.replaceChildren(...found.map(f => {
+    const a = document.createElement('a'); a.className = 'chip'; a.href = '#' + f.id;
+    const b = document.createElement('b'); b.textContent = f.w;
+    a.append(b, f.s);
+    return a;
+  }));
+  glossEl.hidden = !found.length;
 }
 const wordBreak = () => { if (tape.length && tape[tape.length - 1].c !== ' ') tape.push({ c: ' ' }); };
 let sample = true;
+function endSample() { sample = false; $('#sampleTag').hidden = $('#sampleNote').hidden = true; }
 function dismissSample() {
   if (!sample) return;
-  sample = false; $('#sampleTag').hidden = true;
+  endSample();
   tape.length = 0; hardReset(); renderTape();
 }
 
@@ -257,7 +273,7 @@ $('#swPlay').addEventListener('click', () => {
   wordBreak();
   play(rec.ev, { decode: true });
 });
-const clearAll = () => { stopPlay(); tape.length = 0; hardReset(); renderTape(); sample = false; $('#sampleTag').hidden = true; };
+const clearAll = () => { stopPlay(); tape.length = 0; hardReset(); renderTape(); endSample(); };
 $('#swClr').addEventListener('click', clearAll);
 $('#clearBtn').addEventListener('click', clearAll);
 
@@ -284,6 +300,7 @@ $('#blindBtn').addEventListener('click', e => {
   const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
   e.currentTarget.setAttribute('aria-pressed', String(on));
   $('#paper').classList.toggle('blind', on);
+  renderGloss();
 });
 $('#copyBtn').addEventListener('click', e => {
   const btn = e.currentTarget, txt = tape.map(t => t.c).join('').trim();
@@ -325,3 +342,4 @@ renderTape();
 board.lightPath('-.-', 'hold');
 renderRO('-.-', 'K');
 renderTiming(); renderLevel(); renderTarget(true); recLabel();
+renderGlossary($('#glossList'), e => play(e.code ? codeToEvents(e.code, U()) : textToEvents(e.send, U()), { decode: false }));

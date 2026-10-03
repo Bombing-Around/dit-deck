@@ -12,6 +12,7 @@ A playable Morse code trainer card. Plain HTML, CSS, and ES modules: no build st
 - **SND / REC / PLAY / CLR**: silent LED-only mode, record raw key timing, replay it through the decoder, clear the tape.
 - **Send text**: the card keys your text at the set speed. Blind-copy mode hides the tape for ear training.
 - **Drill**: Koch-order practice in "see it" or "hear it" mode, with streak and accuracy.
+- **Glossary**: on-air shorthand (CQ, DE, K, 73, prosigns, Q codes), Morse basics, and the card's labels, each playable. Chips under the tape explain any shorthand in your copy.
 
 ## Timing
 
@@ -44,6 +45,7 @@ On iOS the first tap unlocks audio. The page requests a playback audio session s
 | `js/morse.js` | Code tables, Koch order, text-to-key-events timing |
 | `js/audio.js` | Web Audio sidetone and the iOS audio unlock |
 | `js/chart.js` | Pathway and tree chart drawing, plus path lighting |
+| `js/glossary.js` | Glossary terms, their rendering, and the tape gloss |
 | `js/main.js` | Decoder, tape, player, recorder, drill, and UI wiring |
 
 ## License

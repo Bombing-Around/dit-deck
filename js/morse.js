@@ -25,3 +25,13 @@ export function textToEvents(text, unit) {
   });
   return ev;
 }
+
+// Key events for one unbroken run of marks, like a prosign.
+export function codeToEvents(code, unit) {
+  const ev = []; let t = 0;
+  [...code].forEach((e, i) => {
+    if (i) t += unit;
+    ev.push({ t, down: 1 }); t += e === '.' ? unit : 3 * unit; ev.push({ t, down: 0 });
+  });
+  return ev;
+}

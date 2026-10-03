@@ -16,7 +16,7 @@
 <main class="wrap">
   <header class="head">
     <h1>Dit Deck</h1>
-    <p>A pocket CW trainer card. Hold the key (or <kbd>Space</kbd>) and watch your path light up the chart. Switch between the pathway card layout and the binary tree with JP1. Letters print on the tape when you pause.</p>
+    <p>A pocket CW trainer card. Hold the key (or <kbd>Space</kbd>) and watch your path light up the chart. Switch between the pathway card layout and the binary tree with JP1. Letters print on the tape when you pause. New to Morse or ham shorthand? See the <a href="#glossary">glossary</a>.</p>
   </header>
 
   <section class="board" aria-label="Trainer card">
@@ -78,6 +78,8 @@
       </div>
     </div>
     <div class="paper" id="paper"><span id="tapeText"></span></div>
+    <p class="gloss-note" id="sampleNote">This is a sample copy: a station calling for anyone to answer. <b>K</b> stays lit on the chart and readout because it was the last letter copied. Key anything, or press Clear, to start your own.</p>
+    <p class="gloss" id="gloss" hidden></p>
   </section>
 
   <section class="bench">
@@ -93,7 +95,7 @@
 
     <div class="bench-card">
       <h2>Drill</h2>
-      <p class="note">Koch order, a few characters at a time. Add one more once you're holding 90%.</p>
+      <p class="note"><a href="#g-koch">Koch order</a>, a few characters at a time. Add one more once you're holding 90%.</p>
       <div class="row">
         <div class="seg" role="group" aria-label="Drill mode">
           <button type="button" data-mode="see" aria-pressed="true">See it</button>
@@ -114,6 +116,12 @@
         <div><dt>Tries</dt><dd id="stTries">0</dd></div>
       </dl>
     </div>
+  </section>
+
+  <section class="glossary" id="glossary" aria-labelledby="glossaryH">
+    <h2 id="glossaryH">Glossary</h2>
+    <p class="note">Press ▶ to hear a term at the current speed and tone. Terms in the copy above link down here.</p>
+    <div class="g-groups" id="glossList"></div>
   </section>
 </main>
 </body>
