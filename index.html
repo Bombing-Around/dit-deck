@@ -68,22 +68,22 @@
     <div class="silk-row"><span>BT1 CR2032</span><span id="timing">1 unit = 100 ms</span><a href="#g-fist" id="fist" title="How fast you're actually keying">your fist —</a><span>BZ1 · Q1 · R1 1k</span></div>
   </section>
 
-  <section class="tape" aria-label="Decoded copy">
-    <div class="bar">
-      <h2>Copy<span class="tag" id="sampleTag">sample</span></h2>
-      <div class="actions">
-        <button class="btn ghost" id="blindBtn" type="button" aria-pressed="false">Blind copy</button>
-        <button class="btn ghost" id="copyBtn" type="button">Copy text</button>
-        <button class="btn ghost" id="clearBtn" type="button">Clear</button>
+  <div class="pair">
+    <section class="tape" aria-label="Decoded copy">
+      <div class="bar">
+        <h2>Copy<span class="tag" id="sampleTag">sample</span></h2>
+        <div class="actions">
+          <button class="btn ghost" id="blindBtn" type="button" aria-pressed="false">Blind copy</button>
+          <button class="btn ghost" id="copyBtn" type="button">Copy text</button>
+          <button class="btn ghost" id="clearBtn" type="button">Clear</button>
+        </div>
       </div>
-    </div>
-    <div class="paper" id="paper"><span id="tapeText"></span></div>
-    <p class="gloss-note" id="sampleNote">This is a sample copy: a station calling for anyone to answer. <b>K</b> stays lit on the chart and readout because it was the last letter copied. Key anything, or press Clear, to start your own.</p>
-    <p class="gloss" id="gloss" hidden></p>
-  </section>
+      <div class="paper" id="paper"><span id="tapeText"></span></div>
+      <p class="gloss-note" id="sampleNote">This is a sample copy: a station calling for anyone to answer. <b>K</b> stays lit on the chart and readout because it was the last letter copied. Key anything, or press Clear, to start your own.</p>
+      <p class="gloss" id="gloss" hidden></p>
+    </section>
 
-  <section class="bench">
-    <div class="bench-card">
+    <section class="bench-card send">
       <h2>Send text</h2>
       <p class="note">The card keys your text at the set speed, sounds it, and decodes it onto the tape. Turn on Blind copy and write down what you hear.</p>
       <input type="text" id="sendText" value="CQ CQ DE DIT DECK K" autocomplete="off" spellcheck="false" aria-label="Text to send">
@@ -91,8 +91,10 @@
         <button class="btn" id="sendBtn" type="button">Send</button>
         <button class="btn ghost" id="stopBtn" type="button">Stop</button>
       </div>
-    </div>
+    </section>
+  </div>
 
+  <section class="bench">
     <div class="bench-card">
       <h2>Drill</h2>
       <p class="note"><a href="#g-koch">Koch order</a>, a few characters at a time. Add one more once you're holding 90%.</p>
@@ -120,7 +122,7 @@
     <div class="bench-card speed">
       <div class="speed-head">
         <h2>Speed run</h2>
-        <p class="note">Copy by ear and type what you hear. Three right in a row and your speed goes up 1 wpm; a miss drops it 1. Characters always go out at least as fast as the character-speed slider, and slower speeds just stretch the gaps (<a href="#g-farnsworth">Farnsworth</a>), so you learn each letter's sound instead of counting dots. Letters and groups use the Drill's characters in play.</p>
+        <p class="note">Type what you hear. Three right in a row: +1 wpm; a miss: −1. Below the character speed only the gaps stretch (<a href="#g-farnsworth">Farnsworth</a>). Letters and groups use the Drill's characters.</p>
       </div>
       <div class="speed-body">
         <div class="speed-col">
