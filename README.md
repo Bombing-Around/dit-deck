@@ -2,6 +2,8 @@
 
 A playable Morse code trainer card. Plain HTML, CSS, and ES modules: no build step, no dependencies beyond Google Fonts.
 
+**Play it: [bombing-around.github.io/dit-deck](https://bombing-around.github.io/dit-deck/)**
+
 ## Features
 
 - **Straight key**: tap or hold the on-screen key, or hold <kbd>Space</kbd>. Web Audio sidetone plus a signal LED.
